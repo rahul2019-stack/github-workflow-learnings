@@ -54,7 +54,6 @@ jobs:
       with:
         credentials_json:  ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
     
-    # Step to Authenticate with GCP
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
       with:
@@ -66,7 +65,6 @@ jobs:
     #   run: |-
     #     gcloud auth configure-docker
     
-    # Step to Upload the file to GCP Bucket
     - name: Upload to Google Cloud Storage
       run: |-
         gsutil cp ./src.zip gs://${{ env.GCS_BUCKET_NAME }}/function.zip
@@ -93,10 +91,10 @@ jobs:
       - name: Deploy Cloud Function
         run: |
           gcloud functions deploy my-cloud-function \
+            --gen2
             --runtime python38 \
             --trigger-http \
-            --entry-point main \
+            --entry-point main_func \
             --source gs://${{ env.GCS_BUCKET_NAME }}/function.zip \
             --memory 256MB \
             --timeout 60s
-            --gen2
