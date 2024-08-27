@@ -100,3 +100,4 @@ jobs:
             --memory 256MB \
             --timeout 60s
             --verbosity=debug
+            --gen2
