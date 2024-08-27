@@ -91,8 +91,8 @@ jobs:
       - name: Deploy Cloud Function
         run: |
           gcloud functions deploy my-cloud-function \
-            --gen2
-            --runtime python38 \
+            --region us-east1
+            --runtime python39 \
             --trigger-http \
             --entry-point main_func \
             --source gs://${{ env.GCS_BUCKET_NAME }}/function.zip \
