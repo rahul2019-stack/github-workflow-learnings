@@ -91,7 +91,7 @@ jobs:
       - name: Deploy Cloud Function
         run: |
           gcloud functions deploy my-cloud-function \
-            --region us-east1 \  
+            --region us-east1 \
             --runtime python39 \
             --allow-unauthenticated \
             --trigger-http \
