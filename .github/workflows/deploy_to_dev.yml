@@ -41,26 +41,35 @@ jobs:
 
   upload:
     runs-on: ubuntu-latest
-    needs: CI
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Zip the folder
+      run: zip -r ./src.zip source/
 
-      - name: Zip the source code
-        run: |
-          mkdir -p build
-          cd src
-          zip -r ../build/function.zip .
+    - name: Authorize GCP
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json:  ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
+    
+    # Step to Authenticate with GCP
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        version: '>= 363.0.0'
+        project_id: ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
 
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
-
-      - name: Upload ZIP to GCS
-        run: |
-          gsutil cp build/function.zip gs://${{ env.GCS_BUCKET_NAME }}/function.zip
+    # Step to Configure Docker to use the gcloud command-line tool as a credential helper
+    - name: Configure Docker
+      run: |-
+        gcloud auth configure-docker
+    
+    # Step to Upload the file to GCP Bucket
+    - name: Upload to Google Cloud Storage
+      run: |-
+        gsutil cp ./src.zip gs://${function-zip-rahul}/new_file_name
 
   deploy:
     runs-on: ubuntu-latest
