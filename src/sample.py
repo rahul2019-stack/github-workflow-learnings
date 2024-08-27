@@ -6,6 +6,6 @@ def add_numbers(a: int, b: int) -> int:
     c = a+b
     return c
 
-if __name__=="__main__":
+def main():
     print(greeting("Rahul"))
     print(add_numbers(5, 10))

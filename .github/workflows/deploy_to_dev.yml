@@ -5,6 +5,9 @@ on:
     branches-ignore:
       - main
 
+env:
+    PROJECT_ID: rahul-dev-433809
+
 jobs:
   CI:
     runs-on: ubuntu-latest
@@ -35,32 +38,52 @@ jobs:
         run: |
           pytest tests/
 
-  terraform:
+  upload:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
         with:
-          terraform_version: 1.5.3
+          project_id: ${{ env.PROJECT_ID }}
+          credentials: ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
 
-      - name: Set up Google Cloud authentication
-        run: echo "${{ secrets.DEV_GCP_CREDENTIALS_JSON }}" > $HOME/gcp-key.json
+      - name: Zip the source code
+        run: |
+          mkdir -p build
+          cd src
+          zip -r ../build/function.zip .
+          
+      - name: Upload ZIP to GCS
+        run: |
+          gsutil cp build/function.zip gs://function-zip-rahul/function.zip
 
-      - name: Terraform Init
-        run: terraform init
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          version: 'latest'
+          project_id: ${{ env.GCP_PROJECT_ID }}
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-key.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
 
-      - name: Terraform Plan
-        run: terraform plan
+      - name: Deploy Cloud Function
+        run: |
+          gcloud functions deploy my-cloud-function \
+            --runtime python38 \ 
+            --trigger-http \
+            --entry-point main \
+            --source gs://function-zip-rahul/function.zip \ 
+            --memory 256MB \
+            --timeout 60s
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-key.json
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-key.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
