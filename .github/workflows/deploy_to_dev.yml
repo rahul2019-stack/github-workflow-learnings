@@ -47,12 +47,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ env.PROJECT_ID }}
-          credentials: ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
-
       - name: Zip the source code
         run: |
           mkdir -p build
@@ -70,6 +64,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v0.7.0
+        with:
+          credentials_json: ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
