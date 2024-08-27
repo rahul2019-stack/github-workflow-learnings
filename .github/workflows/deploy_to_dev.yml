@@ -99,5 +99,4 @@ jobs:
             --source gs://${{ env.GCS_BUCKET_NAME }}/function.zip \
             --memory 256MB \
             --timeout 60s
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
+            --verbosity=debug
