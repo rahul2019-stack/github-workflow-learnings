@@ -99,5 +99,4 @@ jobs:
             --source gs://${{ env.GCS_BUCKET_NAME }}/function.zip \
             --memory 256MB \
             --timeout 60s
-            --verbosity=debug
             --gen2
