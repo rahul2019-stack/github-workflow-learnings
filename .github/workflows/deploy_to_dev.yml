@@ -34,3 +34,33 @@ jobs:
       - name: Run tests with pytest
         run: |
           pytest tests/
+
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.3
+
+      - name: Set up Google Cloud authentication
+        run: echo "${{ secrets.DEV_GCP_CREDENTIALS_JSON }}" > $HOME/gcp-key.json
+
+      - name: Terraform Init
+        run: terraform init
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-key.json
+
+      - name: Terraform Plan
+        run: terraform plan
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-key.json
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-key.json
