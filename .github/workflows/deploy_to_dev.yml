@@ -47,7 +47,7 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Zip the folder
-      run: zip -r ./src.zip source/
+      run: zip -r ./src.zip src/
 
     - name: Authorize GCP
       uses: 'google-github-actions/auth@v2'
