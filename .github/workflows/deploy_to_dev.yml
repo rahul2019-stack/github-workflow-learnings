@@ -8,6 +8,7 @@ on:
 env:
     PROJECT_ID: rahul-dev-433809
     GCS_BUCKET_NAME: function-zip-rahul
+    CF_SA: cf-dev@rahul-dev-433809.iam.gserviceaccount.com
 
 jobs:
   CI:
@@ -93,6 +94,7 @@ jobs:
           gcloud functions deploy my-cloud-function \
             --region=us-east1 \
             --runtime=python39 \
+            --service-account=cf-dev@rahul-dev-433809.iam.gserviceaccount.com \
             --trigger-http \
             --entry-point=main_func \
             --source=gs://${{ env.GCS_BUCKET_NAME }}/function.zip \
