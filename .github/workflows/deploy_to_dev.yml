@@ -91,11 +91,9 @@ jobs:
       - name: Deploy Cloud Function
         run: |
           gcloud functions deploy my-cloud-function \
-            --region us-east1 \
-            --runtime python39 \
-            --allow-unauthenticated \
+            --region=us-east1 \
+            --runtime=python39 \
             --trigger-http \
-            --entry-point main_func \
-            --source gs://${{ env.GCS_BUCKET_NAME }}/function.zip \
-            --memory 256MB \
-            --timeout 60s
+            --entry-point=main_func \
+            --source=gs://${{ env.GCS_BUCKET_NAME }}/function.zip \
+            --memory=256MB \
