@@ -8,6 +8,6 @@ def add_numbers(a: int, b: int) -> int:
     return c
 
 
-def main():
+def main(request):
     print(greeting("Rahul"))
     print(add_numbers(5, 10))
