@@ -59,7 +59,7 @@ jobs:
       uses: google-github-actions/setup-gcloud@v2
       with:
         version: '>= 363.0.0'
-        project_id: ${{ secrets.DEV_GCP_CREDENTIALS_JSON }}
+        project_id: ${{ secrets.PROJECT_ID }}
 
     # Step to Configure Docker to use the gcloud command-line tool as a credential helper
     - name: Configure Docker
